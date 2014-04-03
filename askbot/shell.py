@@ -43,31 +43,51 @@ def parse_args():
     p.add_argument('--pretty', '-P',
                    action='store_const',
                    const='pretty',
-                   dest='format')
+                   dest='format',
+                   help='Generate pretty-printed output')
     p.add_argument('--csv', '-C',
                    action='store_const',
                    const='csv',
-                   dest='format')
+                   dest='format',
+                   help='Generate CSV output')
+    p.add_argument('--answered',
+                   action='store_const',
+                   const='answered',
+                   dest='scope',
+                   help='An alias for --scope answered')
+    p.add_argument('--unanswered',
+                   action='store_const',
+                   const='unanswered',
+                   dest='scope',
+                   help='An alias for --scope unanswered')
     p.add_argument('--tag', '-t',
                    action='append',
-                   default=[])
-    p.add_argument('--unanswered', '-u')
-    p.add_argument('--endpoint', '-E')
-    p.add_argument('--query', '-q')
+                   default=[],
+                   help=('Select messages with this tag '
+                         '(may be specified multiple times)'))
+    p.add_argument('--endpoint', '-E',
+                   help='AskBot API endpoint')
+    p.add_argument('--query', '-q',
+                   help='An arbitrary text query to apply to searches')
     p.add_argument('--sort', '-s',
                    default='age-desc',
-                   choices=askbot.sort_choices)
+                   choices=askbot.sort_choices,
+                   help='Select sort key and order')
     p.add_argument('--scope', '-S',
                    default='all',
                    choices=askbot.scope_choices)
     p.add_argument('--author', '-a',
-                   type=int)
+                   type=int,
+                   help='Select questions by this author (numeric id)')
     p.add_argument('--limit', '-l',
-                   type=int)
+                   type=int,
+                   help='Limit number of results')
     p.add_argument('--config', '-f',
-                   default=default_config_file)
+                   default=default_config_file,
+                   help='Path to configuration file')
     p.add_argument('--column', '-c',
-                   action='append')
+                   action='append',
+                   help='Select columns to output in --pretty mode')
 
     p.set_defaults(format='pretty')
 

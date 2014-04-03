@@ -10,7 +10,7 @@ queries.
 Synopsis
 ========
 
-    usage: askbot [-h] [--pretty] [--csv] [--tag TAG] [--unanswered UNANSWERED]
+    usage: askbot [-h] [--pretty] [--csv] [--answered] [--unanswered] [--tag TAG]
                   [--endpoint ENDPOINT] [--query QUERY]
                   [--sort {age-asc,age-desc,activity-asc,activity-desc,answers-asc,answers-desc,votes-asc,votes-desc,relevance-asc,relevance-desc}]
                   [--scope {all,unanswered}] [--author AUTHOR] [--limit LIMIT]
@@ -18,18 +18,26 @@ Synopsis
 
     optional arguments:
       -h, --help            show this help message and exit
-      --pretty, -P
-      --csv, -C
-      --tag TAG, -t TAG
-      --unanswered UNANSWERED, -u UNANSWERED
+      --pretty, -P          Generate pretty-printed output
+      --csv, -C             Generate CSV output
+      --answered            An alias for --scope answered
+      --unanswered          An alias for --scope unanswered
+      --tag TAG, -t TAG     Select messages with this tag (may be specified multiple times)
       --endpoint ENDPOINT, -E ENDPOINT
+                            AskBot API endpoint
       --query QUERY, -q QUERY
+                            An arbitrary text query to apply to searches
       --sort {age-asc,age-desc,activity-asc,activity-desc,answers-asc,answers-desc,votes-asc,votes-desc,relevance-asc,relevance-desc}, -s {age-asc,age-desc,activity-asc,activity-desc,answers-asc,answers-desc,votes-asc,votes-desc,relevance-asc,relevance-desc}
+                            Select sort key and order
       --scope {all,unanswered}, -S {all,unanswered}
       --author AUTHOR, -a AUTHOR
+                            Select questions by this author (numeric id)
       --limit LIMIT, -l LIMIT
+                            Limit number of results
       --config CONFIG, -f CONFIG
+                            Path to configuration file
       --column COLUMN, -c COLUMN
+                            Select columns to output in --pretty mode
 
 Configuration
 =============
