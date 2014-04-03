@@ -9,10 +9,12 @@ import time
 import yaml
 from collections import namedtuple
 import prettytable
-import cStringIO
+import re
 
 import askbot
 from unicodecsv import UnicodeWriter
+
+re_url = re.compile('(https?://.*/question/\d+/).*')
 
 column = namedtuple('column', ['label', 'align', 'max_width', 'attribute',
                                'formatter', 'default'])
@@ -23,6 +25,14 @@ def format_date(d):
 def format_tags(t):
     return ' '.join(t)
 
+def format_url(u):
+    if args.short_urls:
+        mo = re_url.match(u)
+        if mo:
+            return mo.group(1)
+
+    return u
+
 columns = [
     column('Question', None, None, 'id', None, True), 
     column('Author', None, 15, lambda q: q['author']['username'], None, True), 
@@ -32,7 +42,7 @@ columns = [
     column('Answers', None, None, 'answer_count', None, True), 
     column('Score', None, None, 'score', None, False), 
     column('Title', 'l', 40, 'title', None, True), 
-    column('URL', 'l', None, 'url', None, False), 
+    column('URL', 'l', None, 'url', format_url, False), 
 ]
 
 default_config_file = os.path.join(
@@ -40,6 +50,7 @@ default_config_file = os.path.join(
 
 def parse_args():
     p = argparse.ArgumentParser()
+    p.add_argument('--short-urls', '-u', action='store_true')
     p.add_argument('--pretty', '-P',
                    action='store_const',
                    const='pretty',
@@ -93,11 +104,15 @@ def parse_args():
 
     return p.parse_args()
 
-def output_csv(rows, args):
+def output_csv(rows):
+    global args
+
     writer = UnicodeWriter(sys.stdout)
     writer.writerows(rows)
 
-def output_pretty(rows, args):
+def output_pretty(rows):
+    global args
+
     t = prettytable.PrettyTable([c[0] for c in columns])
     t.hrules = prettytable.ALL
 
@@ -114,6 +129,7 @@ def output_pretty(rows, args):
     print t.get_string(fields=args.column)
 
 def main():
+    global args
     args = parse_args()
 
     try:
@@ -152,9 +168,9 @@ def main():
         rows.append(row)
 
     if args.format == 'csv':
-        output_csv(rows, args)
+        output_csv(rows)
     elif args.format == 'pretty':
-        output_pretty(rows, args)
+        output_pretty(rows)
 
 if __name__ == '__main__':
     sys.exit(main())
