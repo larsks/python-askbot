@@ -1,0 +1,2 @@
+from askbot import Askbot
+
