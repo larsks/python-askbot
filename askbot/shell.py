@@ -30,6 +30,7 @@ columns = [
     column('Latest', None, None, 'last_activity_at', format_date, True), 
     column('Tags', 'l', None, 'tags', format_tags, True), 
     column('Answers', None, None, 'answer_count', None, True), 
+    column('Score', None, None, 'score', None, False), 
     column('Title', 'l', 40, 'title', None, True), 
     column('URL', 'l', None, 'url', None, False), 
 ]
