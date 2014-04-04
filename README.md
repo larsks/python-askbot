@@ -10,19 +10,21 @@ queries.
 Synopsis
 ========
 
-    usage: askbot [-h] [--pretty] [--csv] [--answered] [--unanswered] [--tag TAG]
-                  [--endpoint ENDPOINT] [--query QUERY]
+    usage: askbot [-h] [--short-urls] [--pretty] [--csv] [--answered]
+                  [--unanswered] [--tag TAG] [--endpoint ENDPOINT] [--query QUERY]
                   [--sort {age-asc,age-desc,activity-asc,activity-desc,answers-asc,answers-desc,votes-asc,votes-desc,relevance-asc,relevance-desc}]
                   [--scope {all,unanswered}] [--author AUTHOR] [--limit LIMIT]
-                  [--config CONFIG] [--column COLUMN]
+                  [--config CONFIG] [--column COLUMN] [--template TEMPLATE]
 
     optional arguments:
       -h, --help            show this help message and exit
+      --short-urls, -u
       --pretty, -P          Generate pretty-printed output
       --csv, -C             Generate CSV output
       --answered            An alias for --scope answered
       --unanswered          An alias for --scope unanswered
-      --tag TAG, -t TAG     Select messages with this tag (may be specified multiple times)
+      --tag TAG, -t TAG     Select messages with this tag (may be specified
+                            multiple times)
       --endpoint ENDPOINT, -E ENDPOINT
                             AskBot API endpoint
       --query QUERY, -q QUERY
@@ -38,6 +40,8 @@ Synopsis
                             Path to configuration file
       --column COLUMN, -c COLUMN
                             Select columns to output in --pretty mode
+      --template TEMPLATE, -T TEMPLATE
+                            Render output using the provided jinja2 template
 
 Configuration
 =============
@@ -107,5 +111,27 @@ Show me the URLs for the five questions tagged RDO with the most answers:
     https://ask.openstack.org/en/question/25295/openstack-dnsaas-options-for-havana/
     https://ask.openstack.org/en/question/25917/how-to-upgrade-keystone/
 
+Using Templates
+===============
 
+The `--template` option allows you to produce output by rendering a
+[Jinja2][] template.  For example, the following template:
+
+    {% for row in rows %}
+    {{'%6s' % row.ID}}: {{row.Title}}
+            Posted: {{row.Posted}} Last activity: {{row.Latest}}
+            {{row.URL}}
+    {% endfor %}
+
+Might produce output like this:
+
+     25926: Invalid nova.conf file with RDO installation
+            Posted: 2014-03-27 Last activity: 2014-03-27
+            https://ask.openstack.org/en/question/25926/
+
+     25837: Supply extra arguments to kvm parameters
+            Posted: 2014-03-25 Last activity: 2014-03-25
+            https://ask.openstack.org/en/question/25837/
+
+[jinja2]: http://jinja.pocoo.org/docs/
 
