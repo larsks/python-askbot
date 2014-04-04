@@ -18,7 +18,7 @@ class Askbot (object):
 
     def questions(self, author=None, scope=None,
                   sort=None, tags=None, query=None,
-                  limit=None):
+                  start_page=None, limit=None):
         s = requests.Session()
 
         if scope is not None:
@@ -42,16 +42,19 @@ class Askbot (object):
         if tags is not None:
             s.params['tags'] = ','.join(tags)
 
+        if start_page is None:
+            start_page = 1
+
         qcount=0
         try:
-            for page in itertools.count(1):
+            for page in itertools.count(int(start_page)):
                 res = s.get('%s/questions' % self.endpoint,
                             params=dict(page=page)).json()
 
                 for q in res['questions']:
                     yield q
                     qcount += 1
-                    if limit and qcount >= limit:
+                    if limit and qcount >= int(limit):
                         raise LimitExceeded()
 
                 if page >= res['pages']:
