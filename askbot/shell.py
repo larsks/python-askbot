@@ -10,14 +10,12 @@ import yaml
 from collections import namedtuple
 import prettytable
 import re
+import jinja2
 
 import askbot
 from unicodecsv import UnicodeWriter
 
 re_url = re.compile('(https?://.*/question/\d+/).*')
-
-column = namedtuple('column', ['label', 'align', 'max_width', 'attribute',
-                               'formatter', 'default'])
 
 def format_date(d):
     return time.strftime('%Y-%m-%d', time.gmtime(int(d)))
@@ -33,17 +31,22 @@ def format_url(u):
 
     return u
 
+Column = namedtuple('column', ['label', 'align', 'max_width', 'attribute',
+                               'formatter', 'default'])
+
 columns = [
-    column('Question', None, None, 'id', None, True), 
-    column('Author', None, 15, lambda q: q['author']['username'], None, True), 
-    column('Posted', None, None, 'added_at', format_date, True), 
-    column('Latest', None, None, 'last_activity_at', format_date, True), 
-    column('Tags', 'l', None, 'tags', format_tags, True), 
-    column('Answers', None, None, 'answer_count', None, True), 
-    column('Score', None, None, 'score', None, False), 
-    column('Title', 'l', 40, 'title', None, True), 
-    column('URL', 'l', None, 'url', format_url, False), 
+    Column('ID', None, None, 'id', None, True), 
+    Column('Author', None, 15, lambda q: q['author']['username'], None, True), 
+    Column('Posted', None, None, 'added_at', format_date, True), 
+    Column('Latest', None, None, 'last_activity_at', format_date, True), 
+    Column('Tags', 'l', None, 'tags', format_tags, True), 
+    Column('Answers', None, None, 'answer_count', None, True), 
+    Column('Score', None, None, 'score', None, False), 
+    Column('Title', 'l', 40, 'title', None, True), 
+    Column('URL', 'l', None, 'url', format_url, False), 
 ]
+
+Row = namedtuple('row', [c.label for c in columns])
 
 default_config_file = os.path.join(
     os.environ['HOME'], '.config', 'askbot.yml')
@@ -99,6 +102,8 @@ def parse_args():
     p.add_argument('--column', '-c',
                    action='append',
                    help='Select columns to output in --pretty mode')
+    p.add_argument('--template', '-T',
+                   help='Render output using the provided jinja2 template')
 
     p.set_defaults(format='pretty')
 
@@ -127,6 +132,14 @@ def output_pretty(rows):
         t.add_row(row)
 
     print t.get_string(fields=args.column)
+
+def output_template(rows):
+    global args
+
+    with open(args.template) as fd:
+        t = jinja2.Template(fd.read())
+
+    print t.render(rows=rows)
 
 def main():
     global args
@@ -165,9 +178,11 @@ def main():
 
             row.append(val)
 
-        rows.append(row)
+        rows.append(Row(*row))
 
-    if args.format == 'csv':
+    if args.template:
+        output_template(rows)
+    elif args.format == 'csv':
         output_csv(rows)
     elif args.format == 'pretty':
         output_pretty(rows)
