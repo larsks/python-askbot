@@ -8,6 +8,7 @@ import itertools
 import time
 import yaml
 from collections import namedtuple
+from datetime import datetime
 import prettytable
 import re
 import jinja2
@@ -139,7 +140,7 @@ def output_template(rows):
     with open(args.template) as fd:
         t = jinja2.Template(fd.read())
 
-    print t.render(rows=rows)
+    print t.render(rows=rows, today=datetime.now())
 
 def main():
     global args
