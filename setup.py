@@ -4,7 +4,7 @@ import setuptools
 
 setuptools.setup(
     install_requires=open('requires.txt').readlines(),
-    version = 4,
+    version = 6,
     name = 'askbot',
     packages = ['askbot'],
     entry_points = {
