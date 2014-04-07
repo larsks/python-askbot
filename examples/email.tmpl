@@ -1,0 +1,15 @@
+======================================================================
+{{ ('Unanswered RDO Questions for %s' % today.strftime('%Y-%m-%d')) | center(75) }}
+======================================================================
+
+  This is a list of unanswered questions tagged "rdo" from
+  http://ask.openstack.org/.  Take a moment and see if you can
+  contribute to the community by providing answers.  Feel free to
+  close questions that appear to have been abandoned by the author.
+
+{% for row in rows %}
+{{'%6s' % row.ID}}: {{row.Title}}
+        Posted: {{row.Posted}} Last activity: {{row.Latest}}
+        {{row.URL}}
+{% endfor %}
+
